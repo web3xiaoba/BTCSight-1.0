@@ -22,9 +22,9 @@ interface LeaderboardUser {
 }
 
 type LeaderboardTab = 'trading' | 'invite' | 'deposit';
-type TradingFilter = 'all' | 'buy' | 'sell';
+type TradingFilter = 'buy' | 'sell';
 type InviteFilter = 'count' | 'commission';
-type DepositFilter = 'all' | 'deposit' | 'withdrawal';
+type DepositFilter = 'deposit' | 'withdrawal';
 type TimeRange = '24h' | '7d' | '30d' | '90d' | '180d' | '1y' | 'all';
 
 export const Leaderboard: React.FC = () => {
@@ -34,9 +34,9 @@ export const Leaderboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<LeaderboardTab>('trading');
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
   const [timeRange, setTimeRange] = useState<TimeRange>('30d');
-  const [tradingFilter, setTradingFilter] = useState<TradingFilter>('all');
+  const [tradingFilter, setTradingFilter] = useState<TradingFilter>('buy');
   const [inviteFilter, setInviteFilter] = useState<InviteFilter>('count');
-  const [depositFilter, setDepositFilter] = useState<DepositFilter>('all');
+  const [depositFilter, setDepositFilter] = useState<DepositFilter>('deposit');
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
   const totalUsers = 50;
@@ -64,7 +64,7 @@ export const Leaderboard: React.FC = () => {
           userId: `user_${String(index + 1).padStart(3, '0')}`,
           username,
           joinDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
-          status: (index < 3 ? 'premium' : index < 10 ? 'vip' : 'active') as 'active' | 'vip' | 'premium'
+          status: 'active' as 'active' | 'vip' | 'premium'
         };
 
         switch (type) {
@@ -115,17 +115,11 @@ export const Leaderboard: React.FC = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const badges = {
-      premium: { color: 'bg-gradient-to-r from-purple-500 to-pink-500', text: 'Premium', icon: <Star className="w-3 h-3" /> },
-      vip: { color: 'bg-gradient-to-r from-yellow-500 to-orange-500', text: 'VIP', icon: <Zap className="w-3 h-3" /> },
-      active: { color: theme === 'dark' ? 'bg-green-500/20 text-green-300' : 'bg-green-100 text-green-700', text: 'Active', icon: null }
-    };
-    
-    const badge = badges[status as keyof typeof badges];
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${badge.color}`}>
-        {badge.icon}
-        {badge.text}
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+        theme === 'dark' ? 'bg-green-500/20 text-green-300' : 'bg-green-100 text-green-700'
+      }`}>
+        活跃
       </span>
     );
   };
@@ -166,10 +160,10 @@ export const Leaderboard: React.FC = () => {
     // 根据不同标签页应用筛选
     switch (activeTab) {
       case 'trading':
-        if (tradingFilter === 'buy') {
-          filteredUsers.sort((a, b) => (b.buyVolume || 0) - (a.buyVolume || 0));
-        } else if (tradingFilter === 'sell') {
+        if (tradingFilter === 'sell') {
           filteredUsers.sort((a, b) => (b.sellVolume || 0) - (a.sellVolume || 0));
+        } else {
+          filteredUsers.sort((a, b) => (b.buyVolume || 0) - (a.buyVolume || 0));
         }
         break;
       case 'invite':
@@ -178,10 +172,10 @@ export const Leaderboard: React.FC = () => {
         }
         break;
       case 'deposit':
-        if (depositFilter === 'deposit') {
-          filteredUsers.sort((a, b) => (b.depositAmount || 0) - (a.depositAmount || 0));
-        } else if (depositFilter === 'withdrawal') {
+        if (depositFilter === 'withdrawal') {
           filteredUsers.sort((a, b) => (b.withdrawalAmount || 0) - (a.withdrawalAmount || 0));
+        } else {
+          filteredUsers.sort((a, b) => (b.depositAmount || 0) - (a.depositAmount || 0));
         }
         break;
     }
@@ -192,18 +186,7 @@ export const Leaderboard: React.FC = () => {
   const renderUserStats = (user: LeaderboardUser) => {
     switch (activeTab) {
       case 'trading':
-        if (tradingFilter === 'buy') {
-          return (
-            <div className="text-right">
-              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
-                {formatVolume(user.buyVolume || 0)}
-              </div>
-              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-                买入量
-              </div>
-            </div>
-          );
-        } else if (tradingFilter === 'sell') {
+        if (tradingFilter === 'sell') {
           return (
             <div className="text-right">
               <div className={`text-lg font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
@@ -217,11 +200,11 @@ export const Leaderboard: React.FC = () => {
         } else {
           return (
             <div className="text-right">
-              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                {formatVolume(user.totalVolume || 0)}
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
+                {formatVolume(user.buyVolume || 0)}
               </div>
               <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-                {user.totalTransactions} 笔交易
+                买入量
               </div>
             </div>
           );
@@ -251,18 +234,7 @@ export const Leaderboard: React.FC = () => {
           );
         }
       case 'deposit':
-        if (depositFilter === 'deposit') {
-          return (
-            <div className="text-right">
-              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
-                {formatVolume(user.depositAmount || 0)}
-              </div>
-              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-                存入金额
-              </div>
-            </div>
-          );
-        } else if (depositFilter === 'withdrawal') {
+        if (depositFilter === 'withdrawal') {
           return (
             <div className="text-right">
               <div className={`text-lg font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
@@ -276,11 +248,11 @@ export const Leaderboard: React.FC = () => {
         } else {
           return (
             <div className="text-right">
-              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
                 {formatVolume(user.depositAmount || 0)}
               </div>
               <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-                存入 {formatVolume(user.withdrawalAmount || 0)} 提取
+                存入金额
               </div>
             </div>
           );
@@ -292,16 +264,137 @@ export const Leaderboard: React.FC = () => {
     switch (activeTab) {
       case 'trading':
         return (
+          <div className={`flex rounded-xl border overflow-hidden ${
+            theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/60 border-gray-200 shadow-sm'
+          }`}>
+            <button
+              onClick={() => setTradingFilter('buy')}
+              className={`px-4 py-2.5 text-sm transition-colors ${
+                tradingFilter === 'buy'
+                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  : theme === 'dark'
+                    ? 'text-white/70 hover:bg-white/10'
+                    : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              买入排行
+            </button>
+            <button
+              onClick={() => setTradingFilter('sell')}
+              className={`px-4 py-2.5 text-sm transition-colors ${
+                tradingFilter === 'sell'
+                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  : theme === 'dark'
+                    ? 'text-white/70 hover:bg-white/10'
+                    : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              卖出排行
+            </button>
+          </div>
+        );
+      case 'invite':
+        return (
+          <div className={`flex rounded-xl border overflow-hidden ${
+            theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/60 border-gray-200 shadow-sm'
+          }`}>
+            <button
+              onClick={() => setInviteFilter('count')}
+              className={`px-4 py-2.5 text-sm transition-colors ${
+                inviteFilter === 'count'
+                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  : theme === 'dark'
+                    ? 'text-white/70 hover:bg-white/10'
+                    : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              按人数
+            </button>
+            <button
+              onClick={() => setInviteFilter('commission')}
+              className={`px-4 py-2.5 text-sm transition-colors ${
+                inviteFilter === 'commission'
+                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  : theme === 'dark'
+                    ? 'text-white/70 hover:bg-white/10'
+                    : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              按佣金
+            </button>
+          </div>
+        );
+      case 'deposit':
+        return (
+          <div className={`flex rounded-xl border overflow-hidden ${
+            theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/60 border-gray-200 shadow-sm'
+          }`}>
+            <button
+              onClick={() => setDepositFilter('deposit')}
+              className={`px-4 py-2.5 text-sm transition-colors ${
+                depositFilter === 'deposit'
+                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  : theme === 'dark'
+                    ? 'text-white/70 hover:bg-white/10'
+                    : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              存入排行
+            </button>
+            <button
+              onClick={() => setDepositFilter('withdrawal')}
+              className={`px-4 py-2.5 text-sm transition-colors ${
+                depositFilter === 'withdrawal'
+                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  : theme === 'dark'
+                    ? 'text-white/70 hover:bg-white/10'
+                    : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              提取排行
+            </button>
+          </div>
+        );
+    }
+  };
+
+  const renderTimeRangeSelector = () => {
+    return (
+      <div className={`flex rounded-xl border overflow-hidden ${
+        theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/60 border-gray-200 shadow-sm'
+      }`}>
+        {timeRangeOptions.map((option) => (
+          <button
+            key={option.value}
+            onClick={() => setTimeRange(option.value)}
+            className={`px-3 py-2.5 text-sm transition-colors whitespace-nowrap ${
+              timeRange === option.value
+                ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                : theme === 'dark'
+                  ? 'text-white/70 hover:bg-white/10'
+                  : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    );
+  };
+
+  const renderMobileSpecificFilter = () => {
+    switch (activeTab) {
+      case 'trading':
+        return (
           <select
             value={tradingFilter}
             onChange={(e) => setTradingFilter(e.target.value as TradingFilter)}
-            className={`px-3 py-2 text-sm rounded-lg border outline-none transition-all duration-200 ${
+            className={`px-3 py-2.5 text-sm rounded-xl border outline-none transition-all duration-200 ${
               theme === 'dark'
-                ? 'bg-white/5 border-white/10 text-white focus:border-white/20'
-                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 shadow-sm'
+                ? 'bg-white/5 border-white/10 text-white focus:border-white/20 focus:bg-white/8'
+                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 focus:bg-white shadow-sm'
             }`}
           >
-            <option value="all">全部交易</option>
             <option value="buy">买入排行</option>
             <option value="sell">卖出排行</option>
           </select>
@@ -311,10 +404,10 @@ export const Leaderboard: React.FC = () => {
           <select
             value={inviteFilter}
             onChange={(e) => setInviteFilter(e.target.value as InviteFilter)}
-            className={`px-3 py-2 text-sm rounded-lg border outline-none transition-all duration-200 ${
+            className={`px-3 py-2.5 text-sm rounded-xl border outline-none transition-all duration-200 ${
               theme === 'dark'
-                ? 'bg-white/5 border-white/10 text-white focus:border-white/20'
-                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 shadow-sm'
+                ? 'bg-white/5 border-white/10 text-white focus:border-white/20 focus:bg-white/8'
+                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 focus:bg-white shadow-sm'
             }`}
           >
             <option value="count">按人数排行</option>
@@ -326,18 +419,37 @@ export const Leaderboard: React.FC = () => {
           <select
             value={depositFilter}
             onChange={(e) => setDepositFilter(e.target.value as DepositFilter)}
-            className={`px-3 py-2 text-sm rounded-lg border outline-none transition-all duration-200 ${
+            className={`px-3 py-2.5 text-sm rounded-xl border outline-none transition-all duration-200 ${
               theme === 'dark'
-                ? 'bg-white/5 border-white/10 text-white focus:border-white/20'
-                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 shadow-sm'
+                ? 'bg-white/5 border-white/10 text-white focus:border-white/20 focus:bg-white/8'
+                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 focus:bg-white shadow-sm'
             }`}
           >
-            <option value="all">全部</option>
             <option value="deposit">存入排行</option>
             <option value="withdrawal">提取排行</option>
           </select>
         );
     }
+  };
+
+  const renderMobileTimeRangeSelector = () => {
+    return (
+      <select
+        value={timeRange}
+        onChange={(e) => setTimeRange(e.target.value as TimeRange)}
+        className={`px-3 py-2.5 text-sm rounded-xl border outline-none transition-all duration-200 ${
+          theme === 'dark'
+            ? 'bg-white/5 border-white/10 text-white focus:border-white/20 focus:bg-white/8'
+            : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 focus:bg-white shadow-sm'
+        }`}
+      >
+        {timeRangeOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    );
   };
 
   const currentTabConfig = getTabConfig(activeTab);
@@ -411,26 +523,44 @@ export const Leaderboard: React.FC = () => {
         </div>
         
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Specific Filter */}
-          {renderSpecificFilter()}
-          
-          {/* Time Range Selector */}
-          <select
-            value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value as TimeRange)}
-            className={`px-3 py-2 text-sm rounded-lg border outline-none transition-all duration-200 ${
-              theme === 'dark'
-                ? 'bg-white/5 border-white/10 text-white focus:border-white/20'
-                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 shadow-sm'
-            }`}
-          >
-            {timeRangeOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+        {/* Desktop Filters */}
+        <div className="hidden md:block">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              {/* Specific Filter */}
+              {renderSpecificFilter()}
+              
+              {/* Time Range Selector */}
+              {renderTimeRangeSelector()}
+            </div>
+            
+            {/* Total Count */}
+            <div className={`text-sm font-medium ${
+              theme === 'dark' ? 'text-white/70' : 'text-gray-700'
+            }`}>
+              共 {totalUsers} 人
+            </div>
+          </div>
+        </div>
+        
+        {/* Mobile Filters */}
+        <div className="md:hidden space-y-3">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <span className={`text-sm font-medium ${
+                theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+              }`}>筛选条件</span>
+              <span className={`text-sm font-medium ${
+                theme === 'dark' ? 'text-white/70' : 'text-gray-700'
+              }`}>
+                共 {totalUsers} 人
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {renderMobileSpecificFilter()}
+              {renderMobileTimeRangeSelector()}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -455,18 +585,25 @@ export const Leaderboard: React.FC = () => {
                     <span className={`font-semibold ${
                       theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>{user.username}</span>
-                    {getStatusBadge(user.status)}
+                    <div className="md:block hidden">
+                      {getStatusBadge(user.status)}
+                    </div>
                   </div>
                   <div className={`text-sm ${
                     theme === 'dark' ? 'text-white/60' : 'text-gray-600'
                   }`}>
-                    加入于 {user.joinDate}
+                    <span className="md:inline hidden">加入于 </span>{user.joinDate}
+                  </div>
+                  <div className="md:hidden block mt-1">
+                    {getStatusBadge(user.status)}
                   </div>
                 </div>
               </div>
               
               {/* Stats */}
-              {renderUserStats(user)}
+              <div className="text-right">
+                {renderUserStats(user)}
+              </div>
             </div>
           </div>
         ))}
@@ -474,13 +611,13 @@ export const Leaderboard: React.FC = () => {
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <div className={`text-sm ${
+        <div className={`text-sm hidden md:block ${
           theme === 'dark' ? 'text-white/60' : 'text-gray-600'
         }`}>
           显示 {startIndex + 1}-{Math.min(endIndex, totalUsers)} 共 {totalUsers} 人
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mx-auto md:mx-0">
           <button
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
@@ -530,6 +667,12 @@ export const Leaderboard: React.FC = () => {
           >
             <ChevronRight className="w-4 h-4" />
           </button>
+        </div>
+        
+        <div className={`text-xs md:hidden text-center mt-2 ${
+          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+        }`}>
+          {startIndex + 1}-{Math.min(endIndex, totalUsers)} / {totalUsers}
         </div>
       </div>
     </div>
