@@ -263,30 +263,38 @@ export const Leaderboard: React.FC = () => {
   const renderSpecificFilter = () => {
     switch (activeTab) {
       case 'trading':
+        const tradingColors = {
+          buy: theme === 'dark' 
+            ? 'bg-green-500/20 text-green-300 border-green-500/30' 
+            : 'bg-green-100 text-green-700 border-green-200',
+          sell: theme === 'dark' 
+            ? 'bg-red-500/20 text-red-300 border-red-500/30' 
+            : 'bg-red-100 text-red-700 border-red-200'
+        };
         return (
-          <div className={`flex rounded-xl border overflow-hidden ${
-            theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/60 border-gray-200 shadow-sm'
+          <div className={`flex rounded-xl overflow-hidden ${
+            theme === 'dark' ? 'bg-white/5' : 'bg-white/60 shadow-sm'
           }`}>
             <button
               onClick={() => setTradingFilter('buy')}
-              className={`px-4 py-2.5 text-sm transition-colors ${
+              className={`px-4 py-2.5 text-sm transition-colors border ${
                 tradingFilter === 'buy'
-                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  ? tradingColors.buy
                   : theme === 'dark'
-                    ? 'text-white/70 hover:bg-white/10'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'text-white/70 hover:bg-white/10 border-white/10'
+                    : 'text-gray-600 hover:bg-gray-100 border-gray-200'
               }`}
             >
               买入排行
             </button>
             <button
               onClick={() => setTradingFilter('sell')}
-              className={`px-4 py-2.5 text-sm transition-colors ${
+              className={`px-4 py-2.5 text-sm transition-colors border ${
                 tradingFilter === 'sell'
-                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  ? tradingColors.sell
                   : theme === 'dark'
-                    ? 'text-white/70 hover:bg-white/10'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'text-white/70 hover:bg-white/10 border-white/10'
+                    : 'text-gray-600 hover:bg-gray-100 border-gray-200'
               }`}
             >
               卖出排行
@@ -294,64 +302,80 @@ export const Leaderboard: React.FC = () => {
           </div>
         );
       case 'invite':
+        const inviteColors = {
+          count: theme === 'dark' 
+            ? 'bg-purple-500/20 text-purple-300 border-purple-500/30' 
+            : 'bg-purple-100 text-purple-700 border-purple-200',
+          commission: theme === 'dark' 
+            ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30' 
+            : 'bg-yellow-100 text-yellow-700 border-yellow-200'
+        };
         return (
-          <div className={`flex rounded-xl border overflow-hidden ${
-            theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/60 border-gray-200 shadow-sm'
+          <div className={`flex rounded-xl overflow-hidden ${
+            theme === 'dark' ? 'bg-white/5' : 'bg-white/60 shadow-sm'
           }`}>
             <button
               onClick={() => setInviteFilter('count')}
-              className={`px-4 py-2.5 text-sm transition-colors ${
+              className={`px-4 py-2.5 text-sm transition-colors border ${
                 inviteFilter === 'count'
-                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  ? inviteColors.count
                   : theme === 'dark'
-                    ? 'text-white/70 hover:bg-white/10'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'text-white/70 hover:bg-white/10 border-white/10'
+                    : 'text-gray-600 hover:bg-gray-100 border-gray-200'
               }`}
             >
-              按人数
+              邀请人数
             </button>
             <button
               onClick={() => setInviteFilter('commission')}
-              className={`px-4 py-2.5 text-sm transition-colors ${
+              className={`px-4 py-2.5 text-sm transition-colors border ${
                 inviteFilter === 'commission'
-                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  ? inviteColors.commission
                   : theme === 'dark'
-                    ? 'text-white/70 hover:bg-white/10'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'text-white/70 hover:bg-white/10 border-white/10'
+                    : 'text-gray-600 hover:bg-gray-100 border-gray-200'
               }`}
             >
-              按佣金
+              邀请佣金
             </button>
           </div>
         );
       case 'deposit':
+        const depositColors = {
+          deposit: theme === 'dark' 
+            ? 'bg-blue-500/20 text-blue-300 border-blue-500/30' 
+            : 'bg-blue-100 text-blue-700 border-blue-200',
+          withdrawal: theme === 'dark' 
+            ? 'bg-orange-500/20 text-orange-300 border-orange-500/30' 
+            : 'bg-orange-100 text-orange-700 border-orange-200'
+        };
         return (
-          <div className={`flex rounded-xl border overflow-hidden ${
-            theme === 'dark' ? 'bg-white/5 border-white/10' : 'bg-white/60 border-gray-200 shadow-sm'
+          <div className={`flex rounded-xl overflow-hidden ${
+            theme === 'dark' ? 'bg-white/5' : 'bg-white/60 shadow-sm'
           }`}>
             <button
               onClick={() => setDepositFilter('deposit')}
-              className={`px-4 py-2.5 text-sm transition-colors ${
+              className={`px-4 py-2.5 text-sm transition-colors border ${
                 depositFilter === 'deposit'
-                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  ? depositColors.deposit
                   : theme === 'dark'
-                    ? 'text-white/70 hover:bg-white/10'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'text-white/70 hover:bg-white/10 border-white/10'
+                    : 'text-gray-600 hover:bg-gray-100 border-gray-200'
               }`}
             >
               存入排行
             </button>
             <button
               onClick={() => setDepositFilter('withdrawal')}
-              className={`px-4 py-2.5 text-sm transition-colors ${
+              className={`px-4 py-2.5 text-sm transition-colors border ${
                 depositFilter === 'withdrawal'
-                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                  ? depositColors.withdrawal
                   : theme === 'dark'
-                    ? 'text-white/70 hover:bg-white/10'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'text-white/70 hover:bg-white/10 border-white/10'
+                    : 'text-gray-600 hover:bg-gray-100 border-gray-200'
               }`}
             >
-              提取排行
+              取出排行
             </button>
           </div>
         );
@@ -410,8 +434,8 @@ export const Leaderboard: React.FC = () => {
                 : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 focus:bg-white shadow-sm'
             }`}
           >
-            <option value="count">按人数排行</option>
-            <option value="commission">按佣金排行</option>
+            <option value="count">邀请人数</option>
+            <option value="commission">邀请佣金</option>
           </select>
         );
       case 'deposit':
@@ -426,7 +450,7 @@ export const Leaderboard: React.FC = () => {
             }`}
           >
             <option value="deposit">存入排行</option>
-            <option value="withdrawal">提取排行</option>
+            <option value="withdrawal">取出排行</option>
           </select>
         );
     }
@@ -611,12 +635,6 @@ export const Leaderboard: React.FC = () => {
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <div className={`text-sm hidden md:block ${
-          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-        }`}>
-          显示 {startIndex + 1}-{Math.min(endIndex, totalUsers)} 共 {totalUsers} 人
-        </div>
-        
         <div className="flex items-center gap-2 mx-auto md:mx-0">
           <button
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
@@ -669,11 +687,7 @@ export const Leaderboard: React.FC = () => {
           </button>
         </div>
         
-        <div className={`text-xs md:hidden text-center mt-2 ${
-          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-        }`}>
-          {startIndex + 1}-{Math.min(endIndex, totalUsers)} / {totalUsers}
-        </div>
+        <div></div>
       </div>
     </div>
   );
