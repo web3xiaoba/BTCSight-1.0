@@ -3,7 +3,11 @@ import { HelpCircle, ChevronRight } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTheme } from '../hooks/useTheme';
 
-export const FAQCard: React.FC = () => {
+interface ProofLinksProps {
+  proof?: any;
+}
+
+export const ProofLinks: React.FC<ProofLinksProps> = ({ proof }) => {
   const { t, language } = useTranslation();
   const { theme } = useTheme();
 
