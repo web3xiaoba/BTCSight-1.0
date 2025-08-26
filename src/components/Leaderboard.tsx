@@ -628,8 +628,8 @@ export const Leaderboard: React.FC = () => {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 mx-auto md:mx-0">
+      <div className="flex items-center justify-center">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}

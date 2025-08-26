@@ -72,24 +72,20 @@ export const FAQCard: React.FC = () => {
     }`}>
       <div className="text-center mb-6">
         <div className="relative">
-          {/* 主题色渐变背景线 */}
-          <div className={`h-px w-full ${
-            theme === 'dark'
-              ? 'bg-gradient-to-r from-transparent via-[#10B981]/30 to-transparent'
-              : 'bg-gradient-to-r from-transparent via-[#10B981]/20 to-transparent'
-          }`}></div>
-          
-          {/* 标题容器 */}
-          <div className="relative -mt-3 flex justify-center">
-            <div className={`px-6 py-2 rounded-lg border ${
-              theme === 'dark'
-                ? 'bg-[#0e1116] border-[#10B981]/20'
-                : 'bg-white border-[#10B981]/15'
-            }`}>
-              <h2 className={`text-lg font-semibold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>常见问题</h2>
-            </div>
+          <div className="flex items-center gap-4 mb-2">
+            <div className={`w-1 h-8 rounded-full bg-gradient-to-b from-[#F0B90B] to-[#F8D12F] ${
+              theme === 'dark' ? 'shadow-lg shadow-[#F0B90B]/20' : 'shadow-md shadow-[#F0B90B]/30'
+            }`}></div>
+            <h2 className={`text-3xl font-bold tracking-tight bg-gradient-to-r from-[#F0B90B] via-[#F8D12F] to-[#F0B90B] bg-clip-text text-transparent ${
+              theme === 'dark' ? 'drop-shadow-lg' : 'drop-shadow-md'
+            }`}>常见问题</h2>
+            <div className={`flex-1 h-px ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            } ${
+              theme === 'dark' 
+                ? 'bg-gradient-to-r from-[#F0B90B]/30 via-[#F8D12F]/20 to-transparent' 
+                : 'bg-gradient-to-r from-[#F0B90B]/40 via-[#F8D12F]/30 to-transparent'
+            }`}></div>
           </div>
         </div>
       </div>
