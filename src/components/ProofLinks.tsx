@@ -186,32 +186,6 @@ export const ProofLinks: React.FC<ProofLinksProps> = ({ proof }) => {
       theme === 'dark'
         ? 'bg-[#0e1116] border-white/10'
         : 'bg-white/80 border-slate-200/60 shadow-lg backdrop-blur-sm'
-    }`}>
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-4 mb-2">
-          <div className={`w-1 h-8 rounded-full bg-gradient-to-b from-[#F0B90B] to-[#F8D12F] ${
-            theme === 'dark' ? 'shadow-lg shadow-[#F0B90B]/20' : 'shadow-md shadow-[#F0B90B]/30'
-          }`}></div>
-          <h2 className={`text-3xl font-bold tracking-tight bg-gradient-to-r from-[#F0B90B] via-[#F8D12F] to-[#F0B90B] bg-clip-text text-transparent ${
-            theme === 'dark' ? 'drop-shadow-lg' : 'drop-shadow-md'
-          }`}>生态项目</h2>
-          <div className={`flex-1 h-px ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          } ${
-            theme === 'dark' 
-              ? 'bg-gradient-to-r from-[#F0B90B]/30 via-[#F8D12F]/20 to-transparent' 
-              : 'bg-gradient-to-r from-[#F0B90B]/40 via-[#F8D12F]/30 to-transparent'
-          }`}></div>
-        </div>
-      </div>
-          <div className={`flex-1 h-px ${
-            theme === 'dark' 
-              ? 'bg-gradient-to-r from-white/20 to-transparent' 
-              : 'bg-gradient-to-r from-gray-300 to-transparent'
-          }`}></div>
-        </div>
-      </div>
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
