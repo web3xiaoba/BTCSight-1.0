@@ -189,37 +189,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
             }`}></div>
           </div>
         </div>
-        
-        {/* Controls */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search */}
-          <div className="relative flex-1">
-            <Search className={`w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 ${
-              theme === 'dark' ? 'text-white/40' : 'text-gray-400'
-            }`} />
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={`pl-10 pr-4 py-2.5 rounded-xl border outline-none transition-all duration-200 w-full ${
-                theme === 'dark'
-                  ? 'bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-white/20 focus:bg-white/8'
-                  : 'bg-white/60 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:bg-white shadow-sm'
-              }`}
-              placeholder="搜索交易哈希、用户ID或地址..."
-            />
-          </div>
-            <div className={`flex-1 h-px ${
-              theme === 'dark' 
-                ? 'bg-gradient-to-r from-white/20 to-transparent' 
-                : 'bg-gradient-to-r from-gray-300 to-transparent'
-            }`}></div>
-          </div>
-          <p className={`text-sm ${
-            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-          }`}>
-            共 {filteredTransactions.length} 笔交易
-          </p>
-        </div>
+      </div>
         
         {/* Controls */}
         <div className="flex flex-col sm:flex-row gap-4">
