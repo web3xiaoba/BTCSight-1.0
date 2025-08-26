@@ -186,6 +186,7 @@ export const ProofLinks: React.FC<ProofLinksProps> = ({ proof }) => {
       theme === 'dark'
         ? 'bg-[#0e1116] border-white/10'
         : 'bg-white/80 border-slate-200/60 shadow-lg backdrop-blur-sm'
+    }`}>
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
