@@ -596,7 +596,7 @@ export const ChartCard: React.FC<ChartCardProps> = ({
                     : 'bg-gray-100 border border-gray-200 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              {t('total')}
+              总存量
             </button>
           </div>
           

@@ -177,9 +177,37 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
             <div className={`w-1 h-8 rounded-full bg-gradient-to-b from-[#F0B90B] to-[#F8D12F] ${
               theme === 'dark' ? 'shadow-lg shadow-[#F0B90B]/20' : 'shadow-md shadow-[#F0B90B]/30'
             }`}></div>
-            <h2 className={`text-2xl font-bold tracking-tight ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            <h2 className={`text-3xl font-bold tracking-tight bg-gradient-to-r from-[#F0B90B] via-[#F8D12F] to-[#F0B90B] bg-clip-text text-transparent ${
+              theme === 'dark' ? 'drop-shadow-lg' : 'drop-shadow-md'
             }`}>交易记录</h2>
+            <div className={`flex-1 h-px ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            } ${
+              theme === 'dark' 
+                ? 'bg-gradient-to-r from-[#F0B90B]/30 via-[#F8D12F]/20 to-transparent' 
+                : 'bg-gradient-to-r from-[#F0B90B]/40 via-[#F8D12F]/30 to-transparent'
+            }`}></div>
+          </div>
+        </div>
+        
+        {/* Controls */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className={`w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 ${
+              theme === 'dark' ? 'text-white/40' : 'text-gray-400'
+            }`} />
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className={`pl-10 pr-4 py-2.5 rounded-xl border outline-none transition-all duration-200 w-full ${
+                theme === 'dark'
+                  ? 'bg-white/5 border-white/10 text-white placeholder-white/40 focus:border-white/20 focus:bg-white/8'
+                  : 'bg-white/60 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-gray-300 focus:bg-white shadow-sm'
+              }`}
+              placeholder="搜索交易哈希、用户ID或地址..."
+            />
+          </div>
             <div className={`flex-1 h-px ${
               theme === 'dark' 
                 ? 'bg-gradient-to-r from-white/20 to-transparent' 

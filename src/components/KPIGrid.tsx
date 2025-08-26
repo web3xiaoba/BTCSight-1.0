@@ -199,20 +199,20 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ summary, loading, onRefresh, o
         />
         
         <KPICard
-          title="总交易数"
-          value={totalTransactions}
-          suffix="笔"
-          icon={<Hash className="w-6 h-6 text-blue-500" />}
-          tooltip={`总交易数: ${totalTransactions} 笔`}
-          theme={theme}
-        />
-        
-        <KPICard
           title="总交易量"
           value={totalVolume}
           suffix={unit}
           icon={<Zap className="w-6 h-6 text-purple-500" />}
           tooltip={`总交易量: ${totalVolume} ${unit}`}
+          theme={theme}
+        />
+        
+        <KPICard
+          title="总交易数"
+          value={totalTransactions}
+          suffix="笔"
+          icon={<Hash className="w-6 h-6 text-blue-500" />}
+          tooltip={`总交易数: ${totalTransactions} 笔`}
           theme={theme}
         />
         
@@ -238,20 +238,20 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ summary, loading, onRefresh, o
         />
         
         <KPICard
-          title="总用户数"
-          value={totalUsers}
-          suffix=""
-          icon={<Users className="w-6 h-6 text-purple-500" />}
-          tooltip={`总用户数: ${totalUsers}`}
-          theme={theme}
-        />
-        
-        <KPICard
           title="总流动性"
           value={totalLiquidity}
           suffix={unit}
           icon={<Droplets className="w-6 h-6 text-cyan-500" />}
           tooltip={`总流动性: ${totalLiquidity} ${unit}`}
+          theme={theme}
+        />
+        
+        <KPICard
+          title="总用户数"
+          value={totalUsers}
+          suffix=""
+          icon={<Users className="w-6 h-6 text-purple-500" />}
+          tooltip={`总用户数: ${totalUsers}`}
           theme={theme}
         />
         
