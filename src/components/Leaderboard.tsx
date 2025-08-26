@@ -3,7 +3,7 @@ import { HelpCircle, ChevronRight } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTheme } from '../hooks/useTheme';
 
-export const FAQCard: React.FC = () => {
+export const Leaderboard: React.FC = () => {
   const { t, language } = useTranslation();
   const { theme } = useTheme();
 
