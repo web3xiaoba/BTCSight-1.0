@@ -279,7 +279,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
         </div>
       </div>
     </div>
-    
+
     {/* Table Content */}
     <div className="overflow-x-auto">
       <div className="min-w-full">
@@ -546,6 +546,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
         }`}>尝试调整搜索条件或筛选器</p>
       </div>
     )}
+  </div>
   </div>
 );
 };
