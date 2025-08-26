@@ -278,7 +278,6 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
           </div>
         </div>
       </div>
-    </div>
 
     {/* Table Content */}
     <div className="overflow-x-auto">
