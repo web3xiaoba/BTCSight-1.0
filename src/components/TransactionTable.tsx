@@ -546,6 +546,5 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
       </div>
     )}
   </div>
-  </div>
 );
 };
