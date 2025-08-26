@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Medal, Award, TrendingUp, Users, Crown, Star, Zap, ArrowUpRight, ArrowDownLeft, UserPlus } from 'lucide-react';
+import { Trophy, Medal, Award, TrendingUp, Users, Crown, Star, Zap, ArrowUpRight, ArrowDownLeft, UserPlus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTheme } from '../hooks/useTheme';
 import { useCurrency } from '../hooks/useCurrency';
@@ -11,14 +11,21 @@ interface LeaderboardUser {
   totalVolume?: number;
   totalTransactions?: number;
   inviteCount?: number;
+  inviteCommission?: number;
   depositAmount?: number;
   withdrawalAmount?: number;
+  buyVolume?: number;
+  sellVolume?: number;
   joinDate: string;
   status: 'active' | 'vip' | 'premium';
   avatar?: string;
 }
 
 type LeaderboardTab = 'trading' | 'invite' | 'deposit';
+type TradingFilter = 'all' | 'buy' | 'sell';
+type InviteFilter = 'count' | 'commission';
+type DepositFilter = 'all' | 'deposit' | 'withdrawal';
+type TimeRange = '24h' | '7d' | '30d' | '90d' | '180d' | '1y' | 'all';
 
 export const Leaderboard: React.FC = () => {
   const { t } = useTranslation();
@@ -26,7 +33,14 @@ export const Leaderboard: React.FC = () => {
   const { unit } = useCurrency();
   const [activeTab, setActiveTab] = useState<LeaderboardTab>('trading');
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
-  const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | 'all'>('30d');
+  const [timeRange, setTimeRange] = useState<TimeRange>('30d');
+  const [tradingFilter, setTradingFilter] = useState<TradingFilter>('all');
+  const [inviteFilter, setInviteFilter] = useState<InviteFilter>('count');
+  const [depositFilter, setDepositFilter] = useState<DepositFilter>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
+  const totalUsers = 50;
+  const totalPages = Math.ceil(totalUsers / usersPerPage);
 
   // 生成不同类型的排行榜数据
   useEffect(() => {
@@ -35,7 +49,13 @@ export const Leaderboard: React.FC = () => {
         'BitcoinWhale', 'CryptoKing', 'DiamondHands', 'MoonLambo', 'HODLer2024',
         'SatoshiFan', 'BlockchainPro', 'CryptoNinja', 'BTCMaster', 'DigitalGold',
         'CoinCollector', 'TradingBot', 'CryptoSage', 'BitMiner', 'ChainLink',
-        'TokenHunter', 'CryptoGuru', 'BitBull', 'CoinWizard', 'BlockMaster'
+        'TokenHunter', 'CryptoGuru', 'BitBull', 'CoinWizard', 'BlockMaster',
+        'CryptoLord', 'BitTrader', 'CoinMaster', 'BlockHunter', 'CryptoElite',
+        'BitcoinPro', 'CoinGuru', 'CryptoWiz', 'BitLord', 'CoinKing',
+        'CryptoHero', 'BitMagic', 'CoinStar', 'CryptoAce', 'BitGenius',
+        'CoinLegend', 'CryptoChamp', 'BitExpert', 'CoinPro', 'CryptoMaster',
+        'BitcoinSage', 'CoinWizard', 'CryptoGiant', 'BitTitan', 'CoinElite',
+        'CryptoLegend', 'BitHero', 'CoinChamp', 'CryptoExpert', 'BitMaster'
       ];
       
       return usernames.map((username, index) => {
@@ -49,16 +69,21 @@ export const Leaderboard: React.FC = () => {
 
         switch (type) {
           case 'trading':
+            const buyVol = Math.random() * 500 + 25;
+            const sellVol = Math.random() * 500 + 25;
             return {
               ...baseUser,
-              totalVolume: Math.random() * 1000 + 50,
+              totalVolume: buyVol + sellVol,
+              buyVolume: buyVol,
+              sellVolume: sellVol,
               totalTransactions: Math.floor(Math.random() * 500) + 10,
             };
           case 'invite':
             return {
               ...baseUser,
               inviteCount: Math.floor(Math.random() * 100) + 1,
-              totalVolume: Math.random() * 500 + 20, // 邀请带来的交易量
+              inviteCommission: Math.random() * 50 + 5,
+              totalVolume: Math.random() * 500 + 20,
             };
           case 'deposit':
             return {
@@ -73,7 +98,8 @@ export const Leaderboard: React.FC = () => {
     };
 
     setUsers(generateUsers(activeTab));
-  }, [activeTab, timeRange]);
+    setCurrentPage(1); // 切换标签时重置到第一页
+  }, [activeTab, timeRange, tradingFilter, inviteFilter, depositFilter]);
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -123,7 +149,7 @@ export const Leaderboard: React.FC = () => {
         return {
           title: '邀请排行榜',
           icon: <UserPlus className="w-4 h-4" />,
-          description: '按邀请用户数量排名'
+          description: '按邀请用户数量和佣金排名'
         };
       case 'deposit':
         return {
@@ -134,45 +160,201 @@ export const Leaderboard: React.FC = () => {
     }
   };
 
+  const getFilteredUsers = () => {
+    let filteredUsers = [...users];
+    
+    // 根据不同标签页应用筛选
+    switch (activeTab) {
+      case 'trading':
+        if (tradingFilter === 'buy') {
+          filteredUsers.sort((a, b) => (b.buyVolume || 0) - (a.buyVolume || 0));
+        } else if (tradingFilter === 'sell') {
+          filteredUsers.sort((a, b) => (b.sellVolume || 0) - (a.sellVolume || 0));
+        }
+        break;
+      case 'invite':
+        if (inviteFilter === 'commission') {
+          filteredUsers.sort((a, b) => (b.inviteCommission || 0) - (a.inviteCommission || 0));
+        }
+        break;
+      case 'deposit':
+        if (depositFilter === 'deposit') {
+          filteredUsers.sort((a, b) => (b.depositAmount || 0) - (a.depositAmount || 0));
+        } else if (depositFilter === 'withdrawal') {
+          filteredUsers.sort((a, b) => (b.withdrawalAmount || 0) - (a.withdrawalAmount || 0));
+        }
+        break;
+    }
+    
+    return filteredUsers;
+  };
+
   const renderUserStats = (user: LeaderboardUser) => {
     switch (activeTab) {
       case 'trading':
+        if (tradingFilter === 'buy') {
+          return (
+            <div className="text-right">
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
+                {formatVolume(user.buyVolume || 0)}
+              </div>
+              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                买入量
+              </div>
+            </div>
+          );
+        } else if (tradingFilter === 'sell') {
+          return (
+            <div className="text-right">
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-red-400' : 'text-red-600'}`}>
+                {formatVolume(user.sellVolume || 0)}
+              </div>
+              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                卖出量
+              </div>
+            </div>
+          );
+        } else {
+          return (
+            <div className="text-right">
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {formatVolume(user.totalVolume || 0)}
+              </div>
+              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                {user.totalTransactions} 笔交易
+              </div>
+            </div>
+          );
+        }
+      case 'invite':
+        if (inviteFilter === 'commission') {
+          return (
+            <div className="text-right">
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-yellow-400' : 'text-yellow-600'}`}>
+                {formatVolume(user.inviteCommission || 0)}
+              </div>
+              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                佣金收入
+              </div>
+            </div>
+          );
+        } else {
+          return (
+            <div className="text-right">
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {user.inviteCount} 人
+              </div>
+              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                邀请人数
+              </div>
+            </div>
+          );
+        }
+      case 'deposit':
+        if (depositFilter === 'deposit') {
+          return (
+            <div className="text-right">
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
+                {formatVolume(user.depositAmount || 0)}
+              </div>
+              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                存入金额
+              </div>
+            </div>
+          );
+        } else if (depositFilter === 'withdrawal') {
+          return (
+            <div className="text-right">
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
+                {formatVolume(user.withdrawalAmount || 0)}
+              </div>
+              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                提取金额
+              </div>
+            </div>
+          );
+        } else {
+          return (
+            <div className="text-right">
+              <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                {formatVolume(user.depositAmount || 0)}
+              </div>
+              <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+                存入 {formatVolume(user.withdrawalAmount || 0)} 提取
+              </div>
+            </div>
+          );
+        }
+    }
+  };
+
+  const renderSpecificFilter = () => {
+    switch (activeTab) {
+      case 'trading':
         return (
-          <div className="text-right">
-            <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              {formatVolume(user.totalVolume || 0)}
-            </div>
-            <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-              {user.totalTransactions} 笔交易
-            </div>
-          </div>
+          <select
+            value={tradingFilter}
+            onChange={(e) => setTradingFilter(e.target.value as TradingFilter)}
+            className={`px-3 py-2 text-sm rounded-lg border outline-none transition-all duration-200 ${
+              theme === 'dark'
+                ? 'bg-white/5 border-white/10 text-white focus:border-white/20'
+                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 shadow-sm'
+            }`}
+          >
+            <option value="all">全部交易</option>
+            <option value="buy">买入排行</option>
+            <option value="sell">卖出排行</option>
+          </select>
         );
       case 'invite':
         return (
-          <div className="text-right">
-            <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              {user.inviteCount} 人
-            </div>
-            <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-              带来 {formatVolume(user.totalVolume || 0)}
-            </div>
-          </div>
+          <select
+            value={inviteFilter}
+            onChange={(e) => setInviteFilter(e.target.value as InviteFilter)}
+            className={`px-3 py-2 text-sm rounded-lg border outline-none transition-all duration-200 ${
+              theme === 'dark'
+                ? 'bg-white/5 border-white/10 text-white focus:border-white/20'
+                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 shadow-sm'
+            }`}
+          >
+            <option value="count">按人数排行</option>
+            <option value="commission">按佣金排行</option>
+          </select>
         );
       case 'deposit':
         return (
-          <div className="text-right">
-            <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-              {formatVolume(user.depositAmount || 0)}
-            </div>
-            <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
-              提取 {formatVolume(user.withdrawalAmount || 0)}
-            </div>
-          </div>
+          <select
+            value={depositFilter}
+            onChange={(e) => setDepositFilter(e.target.value as DepositFilter)}
+            className={`px-3 py-2 text-sm rounded-lg border outline-none transition-all duration-200 ${
+              theme === 'dark'
+                ? 'bg-white/5 border-white/10 text-white focus:border-white/20'
+                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 shadow-sm'
+            }`}
+          >
+            <option value="all">全部</option>
+            <option value="deposit">存入排行</option>
+            <option value="withdrawal">提取排行</option>
+          </select>
         );
     }
   };
 
   const currentTabConfig = getTabConfig(activeTab);
+  const filteredUsers = getFilteredUsers();
+  const startIndex = (currentPage - 1) * usersPerPage;
+  const endIndex = startIndex + usersPerPage;
+  const currentUsers = filteredUsers.slice(startIndex, endIndex);
+
+  const timeRangeOptions: { value: TimeRange; label: string }[] = [
+    { value: '24h', label: '24h' },
+    { value: '7d', label: '7天' },
+    { value: '30d', label: '30天' },
+    { value: '90d', label: '90天' },
+    { value: '180d', label: '半年' },
+    { value: '1y', label: '1年' },
+    { value: 'all', label: '全部' }
+  ];
 
   return (
     <div className={`border rounded-2xl p-6 ${
@@ -228,29 +410,33 @@ export const Leaderboard: React.FC = () => {
           })}
         </div>
         
-        {/* Time Range Selector */}
-        <div className="flex items-center gap-2">
-          {(['24h', '7d', '30d', 'all'] as const).map((range) => (
-            <button
-              key={range}
-              onClick={() => setTimeRange(range)}
-              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                timeRange === range
-                  ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
-                  : theme === 'dark'
-                    ? 'bg-white/6 border border-white/10 text-white/70 hover:bg-white/10'
-                    : 'bg-gray-100 border border-gray-200 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              {range === 'all' ? '全部' : range}
-            </button>
-          ))}
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Specific Filter */}
+          {renderSpecificFilter()}
+          
+          {/* Time Range Selector */}
+          <select
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value as TimeRange)}
+            className={`px-3 py-2 text-sm rounded-lg border outline-none transition-all duration-200 ${
+              theme === 'dark'
+                ? 'bg-white/5 border-white/10 text-white focus:border-white/20'
+                : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 shadow-sm'
+            }`}
+          >
+            {timeRangeOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
       {/* Leaderboard List */}
-      <div className="space-y-3">
-        {users.slice(0, 10).map((user) => (
+      <div className="space-y-3 mb-6">
+        {currentUsers.map((user) => (
           <div key={user.userId} className={`border rounded-xl p-4 transition-all duration-200 ${
             theme === 'dark' 
               ? 'bg-white/5 border-white/10 hover:bg-white/8' 
@@ -260,7 +446,7 @@ export const Leaderboard: React.FC = () => {
               <div className="flex items-center gap-4">
                 {/* Rank */}
                 <div className="flex items-center justify-center w-8 h-8">
-                  {getRankIcon(user.rank)}
+                  {getRankIcon(startIndex + currentUsers.indexOf(user) + 1)}
                 </div>
                 
                 {/* User Info */}
@@ -286,54 +472,64 @@ export const Leaderboard: React.FC = () => {
         ))}
       </div>
 
-      {/* Stats Summary */}
-      <div className={`mt-6 p-4 rounded-xl border ${
-        theme === 'dark'
-          ? 'bg-blue-500/10 border-blue-500/20'
-          : 'bg-blue-50/80 border-blue-200/60 shadow-sm backdrop-blur-sm'
-      }`}>
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className={`text-lg font-bold ${
-              theme === 'dark' ? 'text-blue-300' : 'text-blue-700'
-            }`}>
-              {users.length}
-            </div>
-            <div className={`text-sm ${
-              theme === 'dark' ? 'text-blue-200/80' : 'text-blue-600'
-            }`}>
-              活跃用户
-            </div>
+      {/* Pagination */}
+      <div className="flex items-center justify-between">
+        <div className={`text-sm ${
+          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+        }`}>
+          显示 {startIndex + 1}-{Math.min(endIndex, totalUsers)} 共 {totalUsers} 人
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className={`p-2 rounded-lg transition-colors ${
+              currentPage === 1
+                ? theme === 'dark'
+                  ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : theme === 'dark'
+                  ? 'bg-white/10 text-white hover:bg-white/20'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          
+          <div className="flex items-center gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                  currentPage === page
+                    ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                    : theme === 'dark'
+                      ? 'bg-white/10 text-white hover:bg-white/20'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
           </div>
-          <div>
-            <div className={`text-lg font-bold ${
-              theme === 'dark' ? 'text-blue-300' : 'text-blue-700'
-            }`}>
-              {activeTab === 'trading' 
-                ? users.reduce((sum, user) => sum + (user.totalTransactions || 0), 0).toLocaleString()
-                : activeTab === 'invite'
-                ? users.reduce((sum, user) => sum + (user.inviteCount || 0), 0).toLocaleString()
-                : users.reduce((sum, user) => sum + (user.depositAmount || 0), 0).toFixed(2)
-              }
-            </div>
-            <div className={`text-sm ${
-              theme === 'dark' ? 'text-blue-200/80' : 'text-blue-600'
-            }`}>
-              {activeTab === 'trading' ? '总交易数' : activeTab === 'invite' ? '总邀请数' : '总存入量'}
-            </div>
-          </div>
-          <div>
-            <div className={`text-lg font-bold ${
-              theme === 'dark' ? 'text-blue-300' : 'text-blue-700'
-            }`}>
-              {formatVolume(users.reduce((sum, user) => sum + (user.totalVolume || user.depositAmount || 0), 0))}
-            </div>
-            <div className={`text-sm ${
-              theme === 'dark' ? 'text-blue-200/80' : 'text-blue-600'
-            }`}>
-              总交易量
-            </div>
-          </div>
+          
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className={`p-2 rounded-lg transition-colors ${
+              currentPage === totalPages
+                ? theme === 'dark'
+                  ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : theme === 'dark'
+                  ? 'bg-white/10 text-white hover:bg-white/20'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </div>
