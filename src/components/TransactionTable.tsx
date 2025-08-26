@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Download, ExternalLink, Copy, CheckCircle2, ArrowUpRight, ArrowDownLeft, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Search, Download, ExternalLink, Copy, CheckCircle2, ArrowUpRight, ArrowDownLeft, Clock, CheckCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TransactionRow } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTheme } from '../hooks/useTheme';
@@ -18,6 +18,8 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'failed'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'deposit' | 'withdrawal'>('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // 使用传入的交易数据或生成模拟数据
   const allTransactions = useMemo(() => {
@@ -51,11 +53,22 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
     return filtered;
   }, [allTransactions, searchQuery, statusFilter, typeFilter]);
 
+  // 分页逻辑
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentTransactions = filteredTransactions.slice(startIndex, endIndex);
+
+  // 当筛选条件变化时重置到第一页
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, typeFilter, itemsPerPage]);
+
   const exportCSV = () => {
     const headers = ['交易哈希', '时间', '类型', '用户ID', '金额(BTC)', '金额(USD)', '发送地址', '接收地址', '状态', '确认数', '手续费', '备注'];
     const csvContent = [
       headers.join(','),
-      ...filteredTransactions.map(tx =>
+      ...currentTransactions.map(tx =>
         [
           tx.tx_hash,
           tx.timestamp,
@@ -242,13 +255,37 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
               <span className="hidden sm:inline">导出</span>
             </button>
           </div>
+          
+          {/* Items per page selector */}
+          <div className="flex items-center gap-2">
+            <span className={`text-sm ${
+              theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+            }`}>每页显示</span>
+            <select
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(Number(e.target.value))}
+              className={`px-3 py-2.5 rounded-xl border outline-none transition-all duration-200 ${
+                theme === 'dark'
+                  ? 'bg-white/5 border-white/10 text-white focus:border-white/20'
+                  : 'bg-white/60 border-gray-200 text-gray-900 focus:border-gray-300 shadow-sm'
+              }`}
+            >
+              <option value={10}>10</option>
+              <option value={20}>20</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <span className={`text-sm ${
+              theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+            }`}>条</span>
+          </div>
         </div>
       </div>
       
       {/* Table Content */}
       <div className="overflow-x-auto">
         <div className="min-w-full">
-          {filteredTransactions.map((tx, index) => (
+          {currentTransactions.map((tx, index) => (
             <div key={tx.tx_hash} className={`border-b last:border-b-0 transition-all duration-200 ${
               theme === 'dark' 
                 ? 'border-white/5 hover:bg-white/3' 
@@ -420,7 +457,85 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
         </div>
       </div>
       
-      {filteredTransactions.length === 0 && (
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className={`p-4 border-t flex items-center justify-between ${
+          theme === 'dark' ? 'border-white/10' : 'border-gray-200'
+        }`}>
+          <div className={`text-sm ${
+            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+          }`}>
+            共 {filteredTransactions.length} 条记录
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className={`p-2 rounded-lg transition-colors ${
+                currentPage === 1
+                  ? theme === 'dark'
+                    ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : theme === 'dark'
+                    ? 'bg-white/10 text-white hover:bg-white/20'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let page;
+                if (totalPages <= 5) {
+                  page = i + 1;
+                } else if (currentPage <= 3) {
+                  page = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  page = totalPages - 4 + i;
+                } else {
+                  page = currentPage - 2 + i;
+                }
+                
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                      currentPage === page
+                        ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                        : theme === 'dark'
+                          ? 'bg-white/10 text-white hover:bg-white/20'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+            </div>
+            
+            <button
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className={`p-2 rounded-lg transition-colors ${
+                currentPage === totalPages
+                  ? theme === 'dark'
+                    ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : theme === 'dark'
+                    ? 'bg-white/10 text-white hover:bg-white/20'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {currentTransactions.length === 0 && (
         <div className="p-12 text-center">
           <div className={`text-6xl mb-4 ${
             theme === 'dark' ? 'text-white/20' : 'text-gray-300'

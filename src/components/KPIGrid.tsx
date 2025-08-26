@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Droplets, Users, DollarSign, Coins, BarChart3, Activity } from 'lucide-react';
+import { ShieldCheck, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Droplets, Users, DollarSign, Coins, BarChart3, Activity, Hash, Zap } from 'lucide-react';
 import { UnknownDataModal } from './UnknownDataModal';
 import { Summary } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
@@ -73,6 +73,8 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ summary, loading, onRefresh, o
     totalLiquidity: unit === 'BTC' ? 15247.89 : 936543210,
     totalTokens: 8934567,
     totalFees: unit === 'BTC' ? 124.56 : 7650432,
+    totalTransactions: 1234567,
+    totalVolume: unit === 'BTC' ? 98765.43 : 6071234567,
   });
   
   // BTC to USD conversion rate (example: 1 BTC = $61,500)
@@ -93,6 +95,10 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ summary, loading, onRefresh, o
         totalFees: unit === 'BTC'
           ? prev.totalFees + (Math.random() - 0.5) * 5
           : prev.totalFees + (Math.random() - 0.5) * 50000,
+        totalTransactions: prev.totalTransactions + Math.floor(Math.random() * 50) - 20,
+        totalVolume: unit === 'BTC'
+          ? prev.totalVolume + (Math.random() - 0.5) * 200
+          : prev.totalVolume + (Math.random() - 0.5) * 2000000,
       }));
     }, 3000); // 每3秒更新一次
 
@@ -107,6 +113,8 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ summary, loading, onRefresh, o
       totalMarketCap: unit === 'BTC' ? 45892.34 : 2821456789,
       totalLiquidity: unit === 'BTC' ? 15247.89 : 936543210,
       totalFees: unit === 'BTC' ? 124.56 : 7650432,
+      totalTransactions: 1234567,
+      totalVolume: unit === 'BTC' ? 98765.43 : 6071234567,
     }));
   }, [unit]);
 
@@ -144,6 +152,8 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ summary, loading, onRefresh, o
   const totalMarketCap = formatNumber(realtimeData.totalMarketCap, unit === 'BTC' ? 2 : 0);
   const totalLiquidity = formatNumber(realtimeData.totalLiquidity, unit === 'BTC' ? 2 : 0);
   const totalFees = formatNumber(realtimeData.totalFees, unit === 'BTC' ? 2 : 0);
+  const totalTransactions = formatNumber(realtimeData.totalTransactions);
+  const totalVolume = formatNumber(realtimeData.totalVolume, unit === 'BTC' ? 2 : 0);
 
   const getNetFlowTooltip = (period: string, value: string) => {
     const direction = parseFloat(value.replace(/,/g, '')) >= 0 ? t('inflow') : t('outflow');
@@ -177,13 +187,32 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ summary, loading, onRefresh, o
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      {/* 第一行：包含总存量的指标 */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         <KPICard
           title={t('totalReserve')}
           value={totalValue}
           suffix={unit}
           icon={<ShieldCheck className="w-6 h-6 text-emerald-500" />}
           tooltip={`${t('totalReserve')}: ${totalValue} ${unit}`}
+          theme={theme}
+        />
+        
+        <KPICard
+          title="总交易数"
+          value={totalTransactions}
+          suffix="笔"
+          icon={<Hash className="w-6 h-6 text-blue-500" />}
+          tooltip={`总交易数: ${totalTransactions} 笔`}
+          theme={theme}
+        />
+        
+        <KPICard
+          title="总交易量"
+          value={totalVolume}
+          suffix={unit}
+          icon={<Zap className="w-6 h-6 text-purple-500" />}
+          tooltip={`总交易量: ${totalVolume} ${unit}`}
           theme={theme}
         />
         
@@ -195,7 +224,10 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ summary, loading, onRefresh, o
           tooltip={`总代币数: ${totalTokens}`}
           theme={theme}
         />
-        
+      </div>
+      
+      {/* 第二行：其他指标 */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         <KPICard
           title="总市值"
           value={totalMarketCap}
@@ -206,20 +238,20 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ summary, loading, onRefresh, o
         />
         
         <KPICard
-          title="总流动性"
-          value={totalLiquidity}
-          suffix={unit}
-          icon={<Droplets className="w-6 h-6 text-cyan-500" />}
-          tooltip={`总流动性: ${totalLiquidity} ${unit}`}
-          theme={theme}
-        />
-        
-        <KPICard
           title="总用户数"
           value={totalUsers}
           suffix=""
           icon={<Users className="w-6 h-6 text-purple-500" />}
           tooltip={`总用户数: ${totalUsers}`}
+          theme={theme}
+        />
+        
+        <KPICard
+          title="总流动性"
+          value={totalLiquidity}
+          suffix={unit}
+          icon={<Droplets className="w-6 h-6 text-cyan-500" />}
+          tooltip={`总流动性: ${totalLiquidity} ${unit}`}
           theme={theme}
         />
         

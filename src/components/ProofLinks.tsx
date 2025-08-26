@@ -202,11 +202,6 @@ export const ProofLinks: React.FC<ProofLinksProps> = ({ proof }) => {
               : 'bg-gradient-to-r from-gray-300 to-transparent'
           }`}></div>
         </div>
-        <p className={`text-sm ${
-          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-        }`}>
-          基于ICP网络的ckBTC生态系统项目
-        </p>
       </div>
 
       {/* Projects Grid */}
