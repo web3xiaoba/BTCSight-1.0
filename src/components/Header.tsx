@@ -128,7 +128,7 @@ export const Header: React.FC<HeaderProps> = ({ language, onLanguageToggle }) =>
                         }`}
                       >
                         <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-[#3961FB] to-[#6344FF]"></div>
-                        用户排行榜
+                        排行榜单
                       </button>
                       <button
                         onClick={() => scrollToSection('transactions')}
