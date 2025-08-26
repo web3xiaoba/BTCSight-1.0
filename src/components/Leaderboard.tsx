@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trophy, Medal, Award, TrendingUp, Users, Crown, Star, Zap } from 'lucide-react';
+import { Trophy, Medal, Award, TrendingUp, Users, Crown, Star, Zap, ArrowUpRight, ArrowDownLeft, UserPlus } from 'lucide-react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useTheme } from '../hooks/useTheme';
 import { useCurrency } from '../hooks/useCurrency';
@@ -8,23 +8,29 @@ interface LeaderboardUser {
   rank: number;
   userId: string;
   username: string;
-  totalVolume: number;
-  totalTransactions: number;
+  totalVolume?: number;
+  totalTransactions?: number;
+  inviteCount?: number;
+  depositAmount?: number;
+  withdrawalAmount?: number;
   joinDate: string;
   status: 'active' | 'vip' | 'premium';
   avatar?: string;
 }
 
+type LeaderboardTab = 'trading' | 'invite' | 'deposit';
+
 export const Leaderboard: React.FC = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { unit } = useCurrency();
+  const [activeTab, setActiveTab] = useState<LeaderboardTab>('trading');
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | 'all'>('30d');
 
-  // 生成模拟排行榜数据
+  // 生成不同类型的排行榜数据
   useEffect(() => {
-    const generateUsers = (): LeaderboardUser[] => {
+    const generateUsers = (type: LeaderboardTab): LeaderboardUser[] => {
       const usernames = [
         'BitcoinWhale', 'CryptoKing', 'DiamondHands', 'MoonLambo', 'HODLer2024',
         'SatoshiFan', 'BlockchainPro', 'CryptoNinja', 'BTCMaster', 'DigitalGold',
@@ -32,19 +38,42 @@ export const Leaderboard: React.FC = () => {
         'TokenHunter', 'CryptoGuru', 'BitBull', 'CoinWizard', 'BlockMaster'
       ];
       
-      return usernames.map((username, index) => ({
-        rank: index + 1,
-        userId: `user_${String(index + 1).padStart(3, '0')}`,
-        username,
-        totalVolume: Math.random() * 1000 + 50,
-        totalTransactions: Math.floor(Math.random() * 500) + 10,
-        joinDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
-        status: index < 3 ? 'premium' : index < 10 ? 'vip' : 'active'
-      }));
+      return usernames.map((username, index) => {
+        const baseUser = {
+          rank: index + 1,
+          userId: `user_${String(index + 1).padStart(3, '0')}`,
+          username,
+          joinDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10),
+          status: (index < 3 ? 'premium' : index < 10 ? 'vip' : 'active') as 'active' | 'vip' | 'premium'
+        };
+
+        switch (type) {
+          case 'trading':
+            return {
+              ...baseUser,
+              totalVolume: Math.random() * 1000 + 50,
+              totalTransactions: Math.floor(Math.random() * 500) + 10,
+            };
+          case 'invite':
+            return {
+              ...baseUser,
+              inviteCount: Math.floor(Math.random() * 100) + 1,
+              totalVolume: Math.random() * 500 + 20, // 邀请带来的交易量
+            };
+          case 'deposit':
+            return {
+              ...baseUser,
+              depositAmount: Math.random() * 800 + 100,
+              withdrawalAmount: Math.random() * 600 + 50,
+            };
+          default:
+            return baseUser;
+        }
+      });
     };
 
-    setUsers(generateUsers());
-  }, [timeRange]);
+    setUsers(generateUsers(activeTab));
+  }, [activeTab, timeRange]);
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -82,6 +111,69 @@ export const Leaderboard: React.FC = () => {
     return volume.toFixed(4) + ' BTC';
   };
 
+  const getTabConfig = (tab: LeaderboardTab) => {
+    switch (tab) {
+      case 'trading':
+        return {
+          title: '交易排行榜',
+          icon: <TrendingUp className="w-4 h-4" />,
+          description: '按交易量和交易次数排名'
+        };
+      case 'invite':
+        return {
+          title: '邀请排行榜',
+          icon: <UserPlus className="w-4 h-4" />,
+          description: '按邀请用户数量排名'
+        };
+      case 'deposit':
+        return {
+          title: '存取排行榜',
+          icon: <ArrowUpRight className="w-4 h-4" />,
+          description: '按存取金额排名'
+        };
+    }
+  };
+
+  const renderUserStats = (user: LeaderboardUser) => {
+    switch (activeTab) {
+      case 'trading':
+        return (
+          <div className="text-right">
+            <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {formatVolume(user.totalVolume || 0)}
+            </div>
+            <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+              {user.totalTransactions} 笔交易
+            </div>
+          </div>
+        );
+      case 'invite':
+        return (
+          <div className="text-right">
+            <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {user.inviteCount} 人
+            </div>
+            <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+              带来 {formatVolume(user.totalVolume || 0)}
+            </div>
+          </div>
+        );
+      case 'deposit':
+        return (
+          <div className="text-right">
+            <div className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+              {formatVolume(user.depositAmount || 0)}
+            </div>
+            <div className={`text-sm ${theme === 'dark' ? 'text-white/60' : 'text-gray-600'}`}>
+              提取 {formatVolume(user.withdrawalAmount || 0)}
+            </div>
+          </div>
+        );
+    }
+  };
+
+  const currentTabConfig = getTabConfig(activeTab);
+
   return (
     <div className={`border rounded-2xl p-6 ${
       theme === 'dark'
@@ -94,14 +186,46 @@ export const Leaderboard: React.FC = () => {
           <div className={`w-1 h-8 rounded-full bg-gradient-to-b from-[#F0B90B] to-[#F8D12F] ${
             theme === 'dark' ? 'shadow-lg shadow-[#F0B90B]/20' : 'shadow-md shadow-[#F0B90B]/30'
           }`}></div>
-          <h2 className={`text-2xl font-bold tracking-tight ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>用户排行榜</h2>
+          <div className="flex items-center gap-2">
+            {currentTabConfig.icon}
+            <h2 className={`text-2xl font-bold tracking-tight ${
+              theme === 'dark' ? 'text-white' : 'text-gray-900'
+            }`}>{currentTabConfig.title}</h2>
+          </div>
           <div className={`flex-1 h-px ${
             theme === 'dark' 
               ? 'bg-gradient-to-r from-white/20 to-transparent' 
               : 'bg-gradient-to-r from-gray-300 to-transparent'
           }`}></div>
+        </div>
+        
+        <p className={`text-sm mb-4 ${
+          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+        }`}>
+          {currentTabConfig.description}
+        </p>
+
+        {/* Tab Selector */}
+        <div className="flex items-center gap-2 mb-4">
+          {(['trading', 'invite', 'deposit'] as const).map((tab) => {
+            const config = getTabConfig(tab);
+            return (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 text-sm rounded-lg transition-colors flex items-center gap-2 ${
+                  activeTab === tab
+                    ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                    : theme === 'dark'
+                      ? 'bg-white/6 border border-white/10 text-white/70 hover:bg-white/10'
+                      : 'bg-gray-100 border border-gray-200 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {config.icon}
+                {config.title}
+              </button>
+            );
+          })}
         </div>
         
         {/* Time Range Selector */}
@@ -150,24 +274,13 @@ export const Leaderboard: React.FC = () => {
                   <div className={`text-sm ${
                     theme === 'dark' ? 'text-white/60' : 'text-gray-600'
                   }`}>
-                    {user.totalTransactions} 笔交易 · 加入于 {user.joinDate}
+                    加入于 {user.joinDate}
                   </div>
                 </div>
               </div>
               
-              {/* Volume */}
-              <div className="text-right">
-                <div className={`text-lg font-bold ${
-                  theme === 'dark' ? 'text-white' : 'text-gray-900'
-                }`}>
-                  {formatVolume(user.totalVolume)}
-                </div>
-                <div className={`text-sm ${
-                  theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                }`}>
-                  总交易量
-                </div>
-              </div>
+              {/* Stats */}
+              {renderUserStats(user)}
             </div>
           </div>
         ))}
@@ -196,19 +309,24 @@ export const Leaderboard: React.FC = () => {
             <div className={`text-lg font-bold ${
               theme === 'dark' ? 'text-blue-300' : 'text-blue-700'
             }`}>
-              {users.reduce((sum, user) => sum + user.totalTransactions, 0).toLocaleString()}
+              {activeTab === 'trading' 
+                ? users.reduce((sum, user) => sum + (user.totalTransactions || 0), 0).toLocaleString()
+                : activeTab === 'invite'
+                ? users.reduce((sum, user) => sum + (user.inviteCount || 0), 0).toLocaleString()
+                : users.reduce((sum, user) => sum + (user.depositAmount || 0), 0).toFixed(2)
+              }
             </div>
             <div className={`text-sm ${
               theme === 'dark' ? 'text-blue-200/80' : 'text-blue-600'
             }`}>
-              总交易数
+              {activeTab === 'trading' ? '总交易数' : activeTab === 'invite' ? '总邀请数' : '总存入量'}
             </div>
           </div>
           <div>
             <div className={`text-lg font-bold ${
               theme === 'dark' ? 'text-blue-300' : 'text-blue-700'
             }`}>
-              {formatVolume(users.reduce((sum, user) => sum + user.totalVolume, 0))}
+              {formatVolume(users.reduce((sum, user) => sum + (user.totalVolume || user.depositAmount || 0), 0))}
             </div>
             <div className={`text-sm ${
               theme === 'dark' ? 'text-blue-200/80' : 'text-blue-600'
