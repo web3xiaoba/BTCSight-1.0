@@ -70,15 +70,19 @@ export const FAQCard: React.FC = () => {
         ? 'bg-[#0e1116] border-white/10'
         : 'bg-white/80 border-slate-200/60 shadow-lg backdrop-blur-sm'
     }`}>
-                ? 'bg-[#0e1116] border-[#10B981]/20'
-                : 'bg-white border-[#10B981]/15'
-            }`}>
-              <h2 className={`text-lg font-semibold ${
-                theme === 'dark' ? 'text-white' : 'text-gray-900'
-              }`}>常见问题</h2>
-            </div>
-          </div>
+      <div className="flex items-center gap-3 mb-6">
+        <div className={`p-2 rounded-lg ${
+          theme === 'dark'
+            ? 'bg-[#0e1116] border-[#10B981]/20'
+            : 'bg-white border-[#10B981]/15'
+        }`}>
+          <HelpCircle className={`w-5 h-5 ${
+            theme === 'dark' ? 'text-[#10B981]' : 'text-[#10B981]'
+          }`} />
         </div>
+        <h2 className={`text-lg font-semibold ${
+          theme === 'dark' ? 'text-white' : 'text-gray-900'
+        }`}>常见问题</h2>
       </div>
       
       <div className="space-y-4">
