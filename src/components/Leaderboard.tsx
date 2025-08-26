@@ -504,43 +504,37 @@ export const Leaderboard: React.FC = () => {
           <div className={`w-1 h-8 rounded-full bg-gradient-to-b from-[#F0B90B] to-[#F8D12F] ${
             theme === 'dark' ? 'shadow-lg shadow-[#F0B90B]/20' : 'shadow-md shadow-[#F0B90B]/30'
           }`}></div>
-          <div className="flex items-center gap-2">
-            {currentTabConfig.icon}
-            <h2 className={`text-2xl font-bold tracking-tight ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>{currentTabConfig.title}</h2>
-          </div>
+          <h2 className={`text-2xl font-bold tracking-tight ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>用户排行榜</h2>
           <div className={`flex-1 h-px ${
             theme === 'dark' 
               ? 'bg-gradient-to-r from-white/20 to-transparent' 
               : 'bg-gradient-to-r from-gray-300 to-transparent'
           }`}></div>
         </div>
-        
-        <p className={`text-sm mb-4 ${
-          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-        }`}>
-          {currentTabConfig.description}
-        </p>
 
         {/* Tab Selector */}
-        <div className="flex items-center gap-2 mb-4">
+        <div className={`flex justify-between items-center p-1 rounded-2xl mb-6 ${
+          theme === 'dark' ? 'bg-white/5 border border-white/10' : 'bg-gray-100/80 border border-gray-200'
+        }`}>
           {(['trading', 'invite', 'deposit'] as const).map((tab) => {
             const config = getTabConfig(tab);
             return (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 text-sm rounded-lg transition-colors flex items-center gap-2 ${
+                className={`flex-1 px-4 py-3 text-sm rounded-xl transition-all duration-200 flex items-center justify-center gap-2 font-medium ${
                   activeTab === tab
-                    ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                    ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white shadow-lg'
                     : theme === 'dark'
-                      ? 'bg-white/6 border border-white/10 text-white/70 hover:bg-white/10'
-                      : 'bg-gray-100 border border-gray-200 text-gray-600 hover:bg-gray-200'
+                      ? 'text-white/70 hover:bg-white/10 hover:text-white'
+                      : 'text-gray-600 hover:bg-white hover:text-gray-900'
                 }`}
               >
                 {config.icon}
-                {config.title}
+                <span className="hidden sm:inline">{config.title}</span>
+                <span className="sm:hidden">{config.title.replace('排行榜', '')}</span>
               </button>
             );
           })}
