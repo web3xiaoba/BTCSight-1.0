@@ -189,7 +189,6 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
             }`}></div>
           </div>
         </div>
-      </div>
         
         {/* Controls */}
         <div className="flex flex-col sm:flex-row gap-4">
@@ -279,273 +278,274 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({ transactions
           </div>
         </div>
       </div>
-      
-      {/* Table Content */}
-      <div className="overflow-x-auto">
-        <div className="min-w-full">
-          {currentTransactions.map((tx, index) => (
-            <div key={tx.tx_hash} className={`border-b last:border-b-0 transition-all duration-200 ${
-              theme === 'dark' 
-                ? 'border-white/5 hover:bg-white/3' 
-                : 'border-gray-100 hover:bg-gray-50/50'
-            }`}>
-              <div className="p-4">
-                {/* Mobile Layout */}
-                <div className="block lg:hidden space-y-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-2">
-                      {getTypeIcon(tx.type)}
-                      <span className={`font-medium ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
-                      }`}>{getTypeText(tx.type)}</span>
-                      <span className={`text-sm ${
-                        theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-                      }`}>#{tx.user_id}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(tx.status)}
-                      <span className={`text-sm ${
-                        tx.status === 'confirmed' ? 'text-green-500' :
-                        tx.status === 'pending' ? 'text-yellow-500' : 'text-red-500'
-                      }`}>{getStatusText(tx.status)}</span>
-                    </div>
+    </div>
+    
+    {/* Table Content */}
+    <div className="overflow-x-auto">
+      <div className="min-w-full">
+        {currentTransactions.map((tx, index) => (
+          <div key={tx.tx_hash} className={`border-b last:border-b-0 transition-all duration-200 ${
+            theme === 'dark' 
+              ? 'border-white/5 hover:bg-white/3' 
+              : 'border-gray-100 hover:bg-gray-50/50'
+          }`}>
+            <div className="p-4">
+              {/* Mobile Layout */}
+              <div className="block lg:hidden space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-2">
+                    {getTypeIcon(tx.type)}
+                    <span className={`font-medium ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>{getTypeText(tx.type)}</span>
+                    <span className={`text-sm ${
+                      theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+                    }`}>#{tx.user_id}</span>
                   </div>
-                  
-                  <div className={`p-3 rounded-lg ${
-                    theme === 'dark' ? 'bg-white/5' : 'bg-gray-50'
-                  }`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`text-sm font-medium ${
-                        theme === 'dark' ? 'text-white/70' : 'text-gray-700'
-                      }`}>交易哈希</span>
-                      <button
-                        onClick={() => copyToClipboard(tx.tx_hash)}
-                        className={`p-1 rounded transition-colors ${
-                          theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'
-                        }`}
-                      >
-                        {copiedHash === tx.tx_hash ? (
-                          <CheckCircle2 className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <Copy className="w-4 h-4 text-gray-400" />
-                        )}
-                      </button>
-                    </div>
-                    <p className={`font-mono text-sm break-all ${
-                      theme === 'dark' ? 'text-white/80' : 'text-gray-800'
-                    }`}>{tx.tx_hash}</p>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(tx.status)}
+                    <span className={`text-sm ${
+                      tx.status === 'confirmed' ? 'text-green-500' :
+                      tx.status === 'pending' ? 'text-yellow-500' : 'text-red-500'
+                    }`}>{getStatusText(tx.status)}</span>
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <span className={`text-xs ${
-                        theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-                      }`}>金额</span>
-                      <p className={`font-semibold ${
-                        theme === 'dark' ? 'text-white' : 'text-gray-900'
-                      }`}>{formatAmount(tx.amount_btc, tx.amount_usd)}</p>
-                    </div>
-                    <div>
-                      <span className={`text-xs ${
-                        theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-                      }`}>手续费</span>
-                      <p className={`text-sm ${
-                        theme === 'dark' ? 'text-white/70' : 'text-gray-700'
-                      }`}>{tx.fee_btc.toFixed(8)} BTC</p>
-                    </div>
+                </div>
+                
+                <div className={`p-3 rounded-lg ${
+                  theme === 'dark' ? 'bg-white/5' : 'bg-gray-50'
+                }`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`text-sm font-medium ${
+                      theme === 'dark' ? 'text-white/70' : 'text-gray-700'
+                    }`}>交易哈希</span>
+                    <button
+                      onClick={() => copyToClipboard(tx.tx_hash)}
+                      className={`p-1 rounded transition-colors ${
+                        theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'
+                      }`}
+                    >
+                      {copiedHash === tx.tx_hash ? (
+                        <CheckCircle2 className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <Copy className="w-4 h-4 text-gray-400" />
+                      )}
+                    </button>
                   </div>
-                  
+                  <p className={`font-mono text-sm break-all ${
+                    theme === 'dark' ? 'text-white/80' : 'text-gray-800'
+                  }`}>{tx.tx_hash}</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <span className={`text-xs ${
                       theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-                    }`}>时间</span>
+                    }`}>金额</span>
+                    <p className={`font-semibold ${
+                      theme === 'dark' ? 'text-white' : 'text-gray-900'
+                    }`}>{formatAmount(tx.amount_btc, tx.amount_usd)}</p>
+                  </div>
+                  <div>
+                    <span className={`text-xs ${
+                      theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                    }`}>手续费</span>
                     <p className={`text-sm ${
                       theme === 'dark' ? 'text-white/70' : 'text-gray-700'
-                    }`}>{new Date(tx.timestamp).toLocaleString()}</p>
+                    }`}>{tx.fee_btc.toFixed(8)} BTC</p>
                   </div>
                 </div>
                 
-                {/* Desktop Layout */}
-                <div className="hidden lg:grid lg:grid-cols-8 lg:gap-4 lg:items-center">
-                  <div className="col-span-2">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`font-mono text-sm ${
-                        theme === 'dark' ? 'text-white/80' : 'text-gray-800'
-                      }`}>
-                        {formatHash(tx.tx_hash)}
-                      </span>
-                      <button
-                        onClick={() => copyToClipboard(tx.tx_hash)}
-                        className={`p-1 rounded transition-colors ${
-                          theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'
-                        }`}
-                        title="复制交易哈希"
-                      >
-                        {copiedHash === tx.tx_hash ? (
-                          <CheckCircle2 className="w-3 h-3 text-green-500" />
-                        ) : (
-                          <Copy className="w-3 h-3 text-gray-400" />
-                        )}
-                      </button>
-                    </div>
-                    <div className={`text-xs ${
-                      theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-                    }`}>
-                      {new Date(tx.timestamp).toLocaleString()}
-                    </div>
-                  </div>
-                  
-                  <div className="col-span-1">
-                    <div className="flex items-center gap-2">
-                      {getTypeIcon(tx.type)}
-                      <span className={`text-sm ${
-                        theme === 'dark' ? 'text-white/80' : 'text-gray-800'
-                      }`}>{getTypeText(tx.type)}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="col-span-1">
-                    <span className={`text-sm font-medium ${
+                <div>
+                  <span className={`text-xs ${
+                    theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                  }`}>时间</span>
+                  <p className={`text-sm ${
+                    theme === 'dark' ? 'text-white/70' : 'text-gray-700'
+                  }`}>{new Date(tx.timestamp).toLocaleString()}</p>
+                </div>
+              </div>
+              
+              {/* Desktop Layout */}
+              <div className="hidden lg:grid lg:grid-cols-8 lg:gap-4 lg:items-center">
+                <div className="col-span-2">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`font-mono text-sm ${
                       theme === 'dark' ? 'text-white/80' : 'text-gray-800'
-                    }`}>{tx.user_id}</span>
-                  </div>
-                  
-                  <div className="col-span-1">
-                    <div className={`text-sm font-semibold ${
-                      theme === 'dark' ? 'text-white' : 'text-gray-900'
                     }`}>
-                      {formatAmount(tx.amount_btc, tx.amount_usd)}
-                    </div>
+                      {formatHash(tx.tx_hash)}
+                    </span>
+                    <button
+                      onClick={() => copyToClipboard(tx.tx_hash)}
+                      className={`p-1 rounded transition-colors ${
+                        theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-gray-200'
+                      }`}
+                      title="复制交易哈希"
+                    >
+                      {copiedHash === tx.tx_hash ? (
+                        <CheckCircle2 className="w-3 h-3 text-green-500" />
+                      ) : (
+                        <Copy className="w-3 h-3 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                  <div className={`text-xs ${
+                    theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                  }`}>
+                    {new Date(tx.timestamp).toLocaleString()}
+                  </div>
+                </div>
+                
+                <div className="col-span-1">
+                  <div className="flex items-center gap-2">
+                    {getTypeIcon(tx.type)}
+                    <span className={`text-sm ${
+                      theme === 'dark' ? 'text-white/80' : 'text-gray-800'
+                    }`}>{getTypeText(tx.type)}</span>
+                  </div>
+                </div>
+                
+                <div className="col-span-1">
+                  <span className={`text-sm font-medium ${
+                    theme === 'dark' ? 'text-white/80' : 'text-gray-800'
+                  }`}>{tx.user_id}</span>
+                </div>
+                
+                <div className="col-span-1">
+                  <div className={`text-sm font-semibold ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {formatAmount(tx.amount_btc, tx.amount_usd)}
+                  </div>
+                  <div className={`text-xs ${
+                    theme === 'dark' ? 'text-white/50' : 'text-gray-500'
+                  }`}>
+                    手续费: {tx.fee_btc.toFixed(8)} BTC
+                  </div>
+                </div>
+                
+                <div className="col-span-2">
+                  <div className={`text-sm ${
+                    theme === 'dark' ? 'text-white/70' : 'text-gray-700'
+                  }`}>
+                    <div>从: {formatAddress(tx.from_address)}</div>
+                    <div>到: {formatAddress(tx.to_address)}</div>
+                  </div>
+                </div>
+                
+                <div className="col-span-1">
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(tx.status)}
+                    <span className={`text-sm ${
+                      tx.status === 'confirmed' ? 'text-green-500' :
+                      tx.status === 'pending' ? 'text-yellow-500' : 'text-red-500'
+                    }`}>{getStatusText(tx.status)}</span>
+                  </div>
+                  {tx.status === 'confirmed' && (
                     <div className={`text-xs ${
                       theme === 'dark' ? 'text-white/50' : 'text-gray-500'
                     }`}>
-                      手续费: {tx.fee_btc.toFixed(8)} BTC
+                      {tx.confirmations} 确认
                     </div>
-                  </div>
-                  
-                  <div className="col-span-2">
-                    <div className={`text-sm ${
-                      theme === 'dark' ? 'text-white/70' : 'text-gray-700'
-                    }`}>
-                      <div>从: {formatAddress(tx.from_address)}</div>
-                      <div>到: {formatAddress(tx.to_address)}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="col-span-1">
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(tx.status)}
-                      <span className={`text-sm ${
-                        tx.status === 'confirmed' ? 'text-green-500' :
-                        tx.status === 'pending' ? 'text-yellow-500' : 'text-red-500'
-                      }`}>{getStatusText(tx.status)}</span>
-                    </div>
-                    {tx.status === 'confirmed' && (
-                      <div className={`text-xs ${
-                        theme === 'dark' ? 'text-white/50' : 'text-gray-500'
-                      }`}>
-                        {tx.confirmations} 确认
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-      
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className={`p-4 border-t flex items-center justify-between ${
-          theme === 'dark' ? 'border-white/10' : 'border-gray-200'
+    </div>
+    
+    {/* Pagination */}
+    {totalPages > 1 && (
+      <div className={`p-4 border-t flex items-center justify-between ${
+        theme === 'dark' ? 'border-white/10' : 'border-gray-200'
+      }`}>
+        <div className={`text-sm ${
+          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
         }`}>
-          <div className={`text-sm ${
-            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-          }`}>
-            共 {filteredTransactions.length} 条记录
+          共 {filteredTransactions.length} 条记录
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className={`p-2 rounded-lg transition-colors ${
+              currentPage === 1
+                ? theme === 'dark'
+                  ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : theme === 'dark'
+                  ? 'bg-white/10 text-white hover:bg-white/20'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          
+          <div className="flex items-center gap-1">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              let page;
+              if (totalPages <= 5) {
+                page = i + 1;
+              } else if (currentPage <= 3) {
+                page = i + 1;
+              } else if (currentPage >= totalPages - 2) {
+                page = totalPages - 4 + i;
+              } else {
+                page = currentPage - 2 + i;
+              }
+              
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                    currentPage === page
+                      ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
+                      : theme === 'dark'
+                        ? 'bg-white/10 text-white hover:bg-white/20'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {page}
+                </button>
+              );
+            })}
           </div>
           
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              className={`p-2 rounded-lg transition-colors ${
-                currentPage === 1
-                  ? theme === 'dark'
-                    ? 'bg-white/5 text-white/30 cursor-not-allowed'
-                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : theme === 'dark'
-                    ? 'bg-white/10 text-white hover:bg-white/20'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            
-            <div className="flex items-center gap-1">
-              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                let page;
-                if (totalPages <= 5) {
-                  page = i + 1;
-                } else if (currentPage <= 3) {
-                  page = i + 1;
-                } else if (currentPage >= totalPages - 2) {
-                  page = totalPages - 4 + i;
-                } else {
-                  page = currentPage - 2 + i;
-                }
-                
-                return (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                      currentPage === page
-                        ? 'bg-gradient-to-r from-[#3961FB] to-[#6344FF] text-white'
-                        : theme === 'dark'
-                          ? 'bg-white/10 text-white hover:bg-white/20'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                );
-              })}
-            </div>
-            
-            <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-              disabled={currentPage === totalPages}
-              className={`p-2 rounded-lg transition-colors ${
-                currentPage === totalPages
-                  ? theme === 'dark'
-                    ? 'bg-white/5 text-white/30 cursor-not-allowed'
-                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : theme === 'dark'
-                    ? 'bg-white/10 text-white hover:bg-white/20'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
+          <button
+            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className={`p-2 rounded-lg transition-colors ${
+              currentPage === totalPages
+                ? theme === 'dark'
+                  ? 'bg-white/5 text-white/30 cursor-not-allowed'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : theme === 'dark'
+                  ? 'bg-white/10 text-white hover:bg-white/20'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
-      )}
-      
-      {currentTransactions.length === 0 && (
-        <div className="p-12 text-center">
-          <div className={`text-6xl mb-4 ${
-            theme === 'dark' ? 'text-white/20' : 'text-gray-300'
-          }`}>📋</div>
-          <p className={`text-lg font-medium mb-2 ${
-            theme === 'dark' ? 'text-white/60' : 'text-gray-600'
-          }`}>未找到匹配的交易</p>
-          <p className={`text-sm ${
-            theme === 'dark' ? 'text-white/40' : 'text-gray-500'
-          }`}>尝试调整搜索条件或筛选器</p>
-        </div>
-      )}
-    </div>
-  );
+      </div>
+    )}
+    
+    {currentTransactions.length === 0 && (
+      <div className="p-12 text-center">
+        <div className={`text-6xl mb-4 ${
+          theme === 'dark' ? 'text-white/20' : 'text-gray-300'
+        }`}>📋</div>
+        <p className={`text-lg font-medium mb-2 ${
+          theme === 'dark' ? 'text-white/60' : 'text-gray-600'
+        }`}>未找到匹配的交易</p>
+        <p className={`text-sm ${
+          theme === 'dark' ? 'text-white/40' : 'text-gray-500'
+        }`}>尝试调整搜索条件或筛选器</p>
+      </div>
+    )}
+  </div>
+);
 };
