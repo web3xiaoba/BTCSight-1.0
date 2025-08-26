@@ -82,7 +82,7 @@ export function generateSeries(days = 7, kind: 'netflow' | 'total' = 'netflow', 
     const ts = range === '1h' || range === '24h' 
       ? new Date(timestamp).toISOString().slice(11, 16) // HH:MM format
       : new Date(timestamp).toISOString().slice(0, 10); // YYYY-MM-DD format
-    const base = kind === 'netflow' ? (Math.sin(i / 2) * 6 - 2) : 1200 + Math.sin(i / 2) * 50;
+    const base = kind === 'netflow' ? (Math.sin(i / 3) * 8 - 1) : 1200 + Math.sin(i / 3) * 80;
     const noise = (Math.random() - 0.5) * (kind === 'netflow' ? 2 : 1);
     arr.push({
       ts,

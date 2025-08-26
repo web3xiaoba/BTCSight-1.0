@@ -500,18 +500,24 @@ export const Leaderboard: React.FC = () => {
     }`}>
       {/* Header */}
       <div className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
-          <div className={`w-1 h-8 rounded-full bg-gradient-to-b from-[#F0B90B] to-[#F8D12F] ${
-            theme === 'dark' ? 'shadow-lg shadow-[#F0B90B]/20' : 'shadow-md shadow-[#F0B90B]/30'
-          }`}></div>
-          <h2 className={`text-2xl font-bold tracking-tight ${
-            theme === 'dark' ? 'text-white' : 'text-gray-900'
-          }`}>用户排行榜</h2>
-          <div className={`flex-1 h-px ${
-            theme === 'dark' 
-              ? 'bg-gradient-to-r from-white/20 to-transparent' 
-              : 'bg-gradient-to-r from-gray-300 to-transparent'
-          }`}></div>
+        <div className="text-center mb-6">
+          <div className="relative">
+            <div className="flex items-center gap-4 mb-2">
+              <div className={`w-1 h-8 rounded-full bg-gradient-to-b from-[#F0B90B] to-[#F8D12F] ${
+                theme === 'dark' ? 'shadow-lg shadow-[#F0B90B]/20' : 'shadow-md shadow-[#F0B90B]/30'
+              }`}></div>
+              <h2 className={`text-3xl font-bold tracking-tight bg-gradient-to-r from-[#F0B90B] via-[#F8D12F] to-[#F0B90B] bg-clip-text text-transparent ${
+                theme === 'dark' ? 'drop-shadow-lg' : 'drop-shadow-md'
+              }`}>用户排行榜</h2>
+              <div className={`flex-1 h-px ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              } ${
+                theme === 'dark' 
+                  ? 'bg-gradient-to-r from-[#F0B90B]/30 via-[#F8D12F]/20 to-transparent' 
+                  : 'bg-gradient-to-r from-[#F0B90B]/40 via-[#F8D12F]/30 to-transparent'
+              }`}></div>
+            </div>
+          </div>
         </div>
 
         {/* Tab Selector */}
@@ -628,7 +634,7 @@ export const Leaderboard: React.FC = () => {
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center mt-6">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
@@ -680,8 +686,6 @@ export const Leaderboard: React.FC = () => {
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
-        
-        <div></div>
       </div>
     </div>
   );

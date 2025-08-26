@@ -167,6 +167,19 @@ export const ChartCard: React.FC<ChartCardProps> = ({
     console.log('📈 ChartCard: 总量数据示例:', enhancedTotalData.slice(0, 3));
   }, [range]);
 
+  // 初始化时生成30d的默认数据
+  React.useEffect(() => {
+    if (range === '30d' && (localSeriesNet.length === 0 || localSeriesTotal.length === 0)) {
+      const days = getDaysFromRange('30d');
+      const newNetData = generateSeries(days, 'netflow', '30d');
+      const newTotalData = generateSeries(days, 'total', '30d');
+      
+      setLocalSeriesNet(newNetData);
+      setLocalSeriesTotal(newTotalData);
+      console.log('🚀 ChartCard: 初始化30d默认数据');
+    }
+  }, []);
+
   // 当外部数据更新时，同步到本地状态
   React.useEffect(() => {
     console.log('📊 ChartCard: 外部 seriesNet 数据更新:', seriesNet.length, '个数据点');
